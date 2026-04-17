@@ -32,7 +32,7 @@ public class Account extends BankEntity implements Bankable {
 
     private double            balance;
     private AccountType       accountType;
-    private String            pin;
+    private String            pinHash; //changed from pin to pin hash
 
     // ArrayList stores each action as a String
     private ArrayList<String> history;
@@ -48,14 +48,19 @@ public class Account extends BankEntity implements Bankable {
         super(accountId, ownerName);
         this.balance     = initialDeposit;
         this.accountType = accountType;
-        this.pin         = pin;
+        this.pinHash     = Encryption.hashPin(pin); //hashes the pin and then stores it 
         this.history     = new ArrayList<>();
         history.add("Account opened. Balance: $" + format(initialDeposit));
     }
 
     public double getBalance() { return balance; }
     public AccountType getAccountType() { return accountType; }
-    public String getPin() { return pin; }
+    public String getPinHash() { return pinHash; }
+
+    //verifys pin by hashing the input and comparing it to the stored hash
+    public boolean verifyPin(String pin) {
+        return pinHash.equals(Encryption.hashPin(pin));
+    }
 
     // Used when loading from file
     protected void setBalance(double b) {
@@ -86,13 +91,18 @@ public class Account extends BankEntity implements Bankable {
         history.add("Account loaded. Balance: $" + format(balance));
     }
 
+    //sets the pin hash when loading from file
+    protected void setPinHash(String hash) {
+        this.pinHash = hash;
+    }
+
     /**
      * Converts account data to one line for saving to file.
      */
     public String toFileLine() {
         return getAccountId() + "|"
                 + getOwnerName() + "|"
-                + pin + "|"
+                + pinHash + "|"
                 + accountType + "|"
                 + format(balance);
     }
