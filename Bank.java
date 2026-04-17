@@ -63,13 +63,14 @@ public class Bank {
                 String[] parts = line.split("\\|");
                 if (parts.length != 5) continue; // skip bad lines
 
-                String id      = parts[0];
-                String name    = parts[1];
-                String pin     = parts[2];
-                double balance = Double.parseDouble(parts[4]); // Double wrapper class
-                Account acc = new CheckingAccount(id, name, 0, pin);
+                String id          = parts[0];
+                String name        = parts[1];
+                String pinHash     = parts[2]; //updated to store hashed pin instead of normal pin
+                double balance     = Double.parseDouble(parts[4]);
+                Account acc = new CheckingAccount(id, name, 0, "0000");
 
-                // Set the real balance and fix the history entry
+                // Set the hashed PIN directly
+                acc.setPinHash(pinHash);
                 acc.setBalance(balance);
                 acc.resetHistory();
                 accounts.add(acc);
@@ -106,7 +107,7 @@ public class Bank {
 
     /** Checks if the PIN matches. Prints error if not. */
     private boolean checkPin(Account acc, String pin) {
-        if (!acc.getPin().equals(pin)) {
+        if (!acc.verifyPin(pin)) {
             System.out.println("\n  [Error] Wrong PIN.");
             return false;
         }
