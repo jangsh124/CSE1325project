@@ -1,3 +1,5 @@
+package CSE1325project;
+
 /**
  * CheckingAccount.java
  * A checking account. Withdrawals of $5 or less are charged a 10% fee.
