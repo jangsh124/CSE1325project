@@ -71,7 +71,7 @@ public class Account extends BankEntity implements Bankable {
 
     // Records a transfer sent to another account
     public boolean transferOut(String toId, double amount) {
-        if (amount <= 0.0) {
+        if (amount <= 0.0 || amount > balance) {
              System.out.println("\n [Error] amount must be greater than zero, please try again.");
             return false;
         }
@@ -87,8 +87,8 @@ public class Account extends BankEntity implements Bankable {
     // Records a transfer received from another account
     public void transferIn(String fromId, double amount) {
 
-         if (amount <= 0.0) {
-             System.out.println("\n [Error] amount must be greater than zero, please try again.");
+        if (amount <= 0.0 || amount > balance) {
+             System.out.println("\n [Error] amount is invalid, please try again.");
             return;
         }
 

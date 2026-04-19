@@ -207,7 +207,7 @@ public class Bank {
         Account receiver = find(toId);
 
         if (amount <= 0.0) {
-            System.out.println("\n [Error] amount must be greater than zero, please try again.");
+             System.out.println("\n [Error] amount is invalid, please try again.");
             return;
         }
         if (sender == null) {
@@ -264,7 +264,7 @@ public class Bank {
         
         Logger.showAccountSummary(accountId);
     }
-    
+
     /**
      * Lists all accounts.
      */
