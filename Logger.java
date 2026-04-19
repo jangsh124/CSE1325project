@@ -120,7 +120,9 @@ public class Logger {
         }
     }
 
-    //Shows an account's summary
+    /**
+     * Shows an account's summary
+    */
     public static void showAccountSummary(String accountId) {
         //checks if log file exists
         File logFile = new File(LOG_FILE);
@@ -133,8 +135,9 @@ public class Logger {
         int numOfDeposits = 0, numOfWithdrawals = 0;
         double totalDeposited = 0, totalWithdrawn = 0;
 
-
-        //reads log file and checks if it contains account Id
+        /**
+         * reads log file and checks if it contains account Id
+         */
         try (BufferedReader br = new BufferedReader(new FileReader(logFile))) {
             String line;
 
@@ -151,13 +154,15 @@ public class Logger {
                         totalWithdrawn += readAmount(line);
                     }
                 } else {
-                    System.out.println("  [Error] Account does not exist.");
+                    System.out.println("  [Error] Unable to read transaction log.");
                 }
             }
 
             br.close();
 
-            //prints out account summary
+            /**
+             * prints out account summary
+             */
             System.out.println("\n  ===== Transaction Summary for " + accountId + " =====");
             System.out.println("Number of deposits: " + numOfDeposits);
             System.out.printf("Total Deposited: $%.2f\n", totalDeposited);
@@ -172,10 +177,12 @@ public class Logger {
             e.printStackTrace();
         }
 
-        System.out.println("  =============================================\n");
+        System.out.println("  ==========================================\n");
     }
 
-    //method to read log file and take the amount
+    /**
+     * method to read log file and take the amount
+     */
     public static double readAmount(String line) {
         String[] parts = line.split("\\$");
         return Double.parseDouble(parts[1]);
