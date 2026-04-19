@@ -1,6 +1,5 @@
 package CSE1325project;
 
-// Compile Command: javac CSE1325project/*.java && java CSE1325project.Main
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -144,16 +143,25 @@ public static void showAccountSummary(String accountId) {
         String line;
 
         while ((line = br.readLine()) != null) {
-            if (!line.contains("Account: " + accountId)) {
+            String lineAccountId = extractAccountId(line);
+
+            // Exact match only (no partial/sub-string matches like A1 vs A10)
+            if (lineAccountId == null || !lineAccountId.equals(accountId)) {
+                continue;
+            }
+
+            Double amount = readAmount(line);
+            if (amount == null) {
+                // Skip malformed lines instead of crashing summary
                 continue;
             }
 
             if (line.contains("DEPOSIT")) {
                 numOfDeposits++;
-                totalDeposited += readAmount(line);
+                totalDeposited += amount;
             } else if (line.contains("WITHDRAW")) {
                 numOfWithdrawals++;
-                totalWithdrawn += readAmount(line);
+                totalWithdrawn += amount;
             }
         }
 
@@ -171,11 +179,30 @@ public static void showAccountSummary(String accountId) {
     }
 }
 
- /**
-     * method to read log file and take the amount
-     */
-    public static double readAmount(String line) {
-        String[] parts = line.split("\\$");
-        return Double.parseDouble(parts[1]);
+private static String extractAccountId(String line) {
+    String marker = "| Account: ";
+    int start = line.indexOf(marker);
+    if (start < 0) return null;
+    start += marker.length();
+
+    int end = line.indexOf(" | Amount:", start);
+    if (end < 0) return null;
+
+    return line.substring(start, end).trim();
+}
+
+public static Double readAmount(String line) {
+    int dollarIndex = line.lastIndexOf('$');
+    if (dollarIndex < 0 || dollarIndex == line.length() - 1) {
+        return null;
     }
+
+    String raw = line.substring(dollarIndex + 1).trim();
+    try {
+        return Double.parseDouble(raw);
+    } catch (NumberFormatException e) {
+        return null;
+    }
+}
+
 }

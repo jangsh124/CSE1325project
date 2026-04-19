@@ -21,8 +21,9 @@ public class Main {
         System.out.println("  4. Withdraw");
         System.out.println("  5. Transfer");
         System.out.println("  6. View account");
-        System.out.println("  7. List all accounts");
-        System.out.println("  8. View log");
+        System.out.println("  7. Show account summary");
+        System.out.println("  8. List all accounts");
+        System.out.println("  9. View log");
         System.out.println("  0. Exit");
         System.out.println("  ------------");
     }
@@ -70,6 +71,13 @@ public class Main {
         System.out.print("\n  Account ID: ");
         String id = scanner.nextLine().trim().toUpperCase();
         bank.viewAccount(id);
+    }
+
+    /**Asks for an ID and shows account transaction summary */
+    private static void doAccountSummary(Bank bank, Scanner scanner) {
+        System.out.print("\n Account ID: ");
+        String id = scanner.nextLine().trim().toUpperCase();
+        bank.showAccountSummary(id);
     }
 
     /** Asks for an ID and amount, then deposits. */
@@ -225,16 +233,17 @@ public class Main {
 
             // Switch to the right action
             switch (choice) {
-                case 1 -> doCreateAccount(bank, scanner);
+                 case 1 -> doCreateAccount(bank, scanner);
                 case 2 -> doRemoveAccount(bank, scanner);
                 case 3 -> doDeposit(bank, scanner);
                 case 4 -> doWithdraw(bank, scanner);
                 case 5 -> doTransfer(bank, scanner);
                 case 6 -> doViewAccount(bank, scanner);
-                case 7 -> bank.listAll();
-                case 8 -> bank.showLog();
+                case 7 -> doAccountSummary(bank, scanner);
+                case 8 -> bank.listAll();
+                case 9 -> bank.showLog();
                 case 0 -> System.out.println("\n  Goodbye! Thank you for using JavaBank.\n");
-                default -> System.out.println("  [Error] Invalid choice. Try 0-8.");
+                default -> System.out.println("  [Error] Invalid choice. Try 0-9.");
             }
 
         } while (choice != 0);

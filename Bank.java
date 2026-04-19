@@ -253,6 +253,19 @@ public class Bank {
     }
 
     /**
+     * Shows account transaction summary
+     */
+    public void showAccountSummary(String accountId) {
+        Account target = find(accountId);
+        if (target == null) {
+            System.out.println("\n  [Error] Account not found: " + accountId);
+            return;
+        }
+        
+        Logger.showAccountSummary(accountId);
+    }
+    
+    /**
      * Lists all accounts.
      */
     public void listAll() {
