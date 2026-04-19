@@ -1,3 +1,5 @@
+package CSE1325project;
+
 import java.util.ArrayList;
 
 // ── Enum (merged from AccountType.java) ──────────────────────────
@@ -69,6 +71,10 @@ public class Account extends BankEntity implements Bankable {
 
     // Records a transfer sent to another account
     public boolean transferOut(String toId, double amount) {
+        if (amount <= 0.0) {
+             System.out.println("\n [Error] amount must be greater than zero, please try again.");
+            return false;
+        }
         if (balance - amount < MIN_BALANCE) {
             System.out.println("  [Error] Not enough money. Balance: $" + format(balance));
             return false;
@@ -80,6 +86,12 @@ public class Account extends BankEntity implements Bankable {
 
     // Records a transfer received from another account
     public void transferIn(String fromId, double amount) {
+
+         if (amount <= 0.0) {
+             System.out.println("\n [Error] amount must be greater than zero, please try again.");
+            return;
+        }
+
         balance += amount;
         history.add("Transfer received from " + fromId + ": +$" + format(amount) + " | Balance: $" + format(balance));
     }

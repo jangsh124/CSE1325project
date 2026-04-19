@@ -1,3 +1,5 @@
+package CSE1325project;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -33,13 +35,11 @@ public class Bank {
      * Each line: id|name|type|balance
      */
     private void saveToFile() {
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(ACCOUNTS_FILE));
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(ACCOUNTS_FILE))) {
             for (Account acc : accounts) {
                 writer.write(acc.toFileLine());
                 writer.newLine();
             }
-            writer.close();
         } catch (IOException e) {
             System.out.println("  [Error] Could not save accounts to file.");
         }
@@ -54,8 +54,7 @@ public class Bank {
             return; // no saved data yet, that's fine
         }
 
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
 
             while ((line = reader.readLine()) != null) {
@@ -75,8 +74,6 @@ public class Bank {
                 acc.resetHistory();
                 accounts.add(acc);
             }
-
-            reader.close();
 
             if (!accounts.isEmpty()) {
                 System.out.println("  [Info] Loaded " + accounts.size() + " account(s) from file.");
@@ -209,6 +206,10 @@ public class Bank {
         Account sender   = find(fromId);
         Account receiver = find(toId);
 
+        if (amount <= 0.0) {
+            System.out.println("\n [Error] amount must be greater than zero, please try again.");
+            return;
+        }
         if (sender == null) {
             System.out.println("\n  [Error] Sender not found: " + fromId);
             return;

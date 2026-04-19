@@ -1,3 +1,7 @@
+package CSE1325project;
+
+// Compile Command: javac CSE1325project/*.java && java CSE1325project.Main
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -118,5 +122,60 @@ public class Logger {
             System.out.println("  [Log Error] Could not write to log.");
             e.printStackTrace();
         }
+    }
+
+
+ /**
+     * Shows an account's summary
+    */
+
+public static void showAccountSummary(String accountId) {
+    File logFile = new File(LOG_FILE);
+
+    if (!logFile.exists()) {
+        System.out.println("  [Log] No log file yet.");
+        return;
+    }
+
+    int numOfDeposits = 0, numOfWithdrawals = 0;
+    double totalDeposited = 0, totalWithdrawn = 0;
+
+    try (BufferedReader br = new BufferedReader(new FileReader(logFile))) {
+        String line;
+
+        while ((line = br.readLine()) != null) {
+            if (!line.contains("Account: " + accountId)) {
+                continue;
+            }
+
+            if (line.contains("DEPOSIT")) {
+                numOfDeposits++;
+                totalDeposited += readAmount(line);
+            } else if (line.contains("WITHDRAW")) {
+                numOfWithdrawals++;
+                totalWithdrawn += readAmount(line);
+            }
+        }
+
+        System.out.println("\n  ===== Transaction Summary for " + accountId + " =====");
+        System.out.println("Number of deposits: " + numOfDeposits);
+        System.out.printf("Total Deposited: $%.2f%n", totalDeposited);
+        System.out.println("Number of withdrawals: " + numOfWithdrawals);
+        System.out.printf("Total withdrawn: $%.2f%n", totalWithdrawn);
+        System.out.printf("Net flow: $%.2f%n", totalDeposited - totalWithdrawn);
+        System.out.println("  ==========================================\n");
+
+    } catch (IOException e) {
+        System.out.println("  [Log Error] Could not read log.");
+        e.printStackTrace();
+    }
+}
+
+ /**
+     * method to read log file and take the amount
+     */
+    public static double readAmount(String line) {
+        String[] parts = line.split("\\$");
+        return Double.parseDouble(parts[1]);
     }
 }

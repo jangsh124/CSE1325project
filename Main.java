@@ -1,9 +1,15 @@
+package CSE1325project;
+
 import java.util.Scanner;
 
 /**
  * Main.java
  * Entry point. Only this class has main().
  */
+
+//Compile Command: javac -d . *.java && java CSE1325project.Main
+
+
 public class Main {
 
     /** Prints the main menu. */
