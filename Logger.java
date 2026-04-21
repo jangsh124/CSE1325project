@@ -1,3 +1,6 @@
+package CSE1325project;
+
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -120,71 +123,86 @@ public class Logger {
         }
     }
 
-    /**
+
+ /**
      * Shows an account's summary
     */
-    public static void showAccountSummary(String accountId) {
-        //checks if log file exists
-        File logFile = new File(LOG_FILE);
 
-        if ((!logFile.exists())) {
-            System.out.println("  [Log] No log file yet.");
-            return;
-        }
+public static void showAccountSummary(String accountId) {
+    File logFile = new File(LOG_FILE);
 
-        int numOfDeposits = 0, numOfWithdrawals = 0;
-        double totalDeposited = 0, totalWithdrawn = 0;
+    if (!logFile.exists()) {
+        System.out.println("  [Log] No log file yet.");
+        return;
+    }
 
-        /**
-         * reads log file and checks if it contains account Id
-         */
-        try (BufferedReader br = new BufferedReader(new FileReader(logFile))) {
-            String line;
+    int numOfDeposits = 0, numOfWithdrawals = 0;
+    double totalDeposited = 0, totalWithdrawn = 0;
 
-            while((line = br.readLine()) != null) {
-                if (line.contains("Account: " + accountId)) {
+    try (BufferedReader br = new BufferedReader(new FileReader(logFile))) {
+        String line;
 
-                    if (line.contains("DEPOSIT")) { 
-                        numOfDeposits++;
-                        totalDeposited += readAmount(line);
-                    }
+        while ((line = br.readLine()) != null) {
+            String lineAccountId = extractAccountId(line);
 
-                    if (line.contains("WITHDRAWN")) {
-                        numOfWithdrawals++;
-                        totalWithdrawn += readAmount(line);
-                    }
-                } else {
-                    System.out.println("  [Error] Unable to read transaction log.");
-                }
+            // Exact match only (no partial/sub-string matches like A1 vs A10)
+            if (lineAccountId == null || !lineAccountId.equals(accountId)) {
+                continue;
             }
 
-            br.close();
+            Double amount = readAmount(line);
+            if (amount == null) {
+                // Skip malformed lines instead of crashing summary
+                continue;
+            }
 
-            /**
-             * prints out account summary
-             */
-            System.out.println("\n  ===== Transaction Summary for " + accountId + " =====");
-            System.out.println("Number of deposits: " + numOfDeposits);
-            System.out.printf("Total Deposited: $%.2f\n", totalDeposited);
-
-            System.out.println("Number of withdrawals: " + numOfWithdrawals);
-            System.out.printf("Total withdrawn: $%.2f\n", totalWithdrawn);
-
-            System.out.printf("Total balance: $%.2f", totalDeposited - totalWithdrawn);
-
-        } catch (IOException e) {
-          System.out.println("  [Log Error] Could not read log.");
-            e.printStackTrace();
+            if (line.contains("DEPOSIT")) {
+                numOfDeposits++;
+                totalDeposited += amount;
+            } else if (line.contains("WITHDRAW")) {
+                numOfWithdrawals++;
+                totalWithdrawn += amount;
+            }
         }
 
+        System.out.println("\n  ===== Transaction Summary for " + accountId + " =====");
+        System.out.println("Number of deposits: " + numOfDeposits);
+        System.out.printf("Total Deposited: $%.2f%n", totalDeposited);
+        System.out.println("Number of withdrawals: " + numOfWithdrawals);
+        System.out.printf("Total withdrawn: $%.2f%n", totalWithdrawn);
+        System.out.printf("Net flow: $%.2f%n", totalDeposited - totalWithdrawn);
         System.out.println("  ==========================================\n");
+
+    } catch (IOException e) {
+        System.out.println("  [Log Error] Could not read log.");
+        e.printStackTrace();
+    }
+}
+
+private static String extractAccountId(String line) {
+    String marker = "| Account: ";
+    int start = line.indexOf(marker);
+    if (start < 0) return null;
+    start += marker.length();
+
+    int end = line.indexOf(" | Amount:", start);
+    if (end < 0) return null;
+
+    return line.substring(start, end).trim();
+}
+
+public static Double readAmount(String line) {
+    int dollarIndex = line.lastIndexOf('$');
+    if (dollarIndex < 0 || dollarIndex == line.length() - 1) {
+        return null;
     }
 
-    /**
-     * method to read log file and take the amount
-     */
-    public static double readAmount(String line) {
-        String[] parts = line.split("\\$");
-        return Double.parseDouble(parts[1]);
+    String raw = line.substring(dollarIndex + 1).trim();
+    try {
+        return Double.parseDouble(raw);
+    } catch (NumberFormatException e) {
+        return null;
     }
+}
+
 }

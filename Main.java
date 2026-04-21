@@ -1,9 +1,15 @@
+package CSE1325project;
+
 import java.util.Scanner;
 
 /**
  * Main.java
  * Entry point. Only this class has main().
  */
+
+//Compile Command: javac -d . *.java && java CSE1325project.Main
+
+
 public class Main {
 
     /** Prints the main menu. */
@@ -227,7 +233,7 @@ public class Main {
 
             // Switch to the right action
             switch (choice) {
-                case 1 -> doCreateAccount(bank, scanner);
+                 case 1 -> doCreateAccount(bank, scanner);
                 case 2 -> doRemoveAccount(bank, scanner);
                 case 3 -> doDeposit(bank, scanner);
                 case 4 -> doWithdraw(bank, scanner);
